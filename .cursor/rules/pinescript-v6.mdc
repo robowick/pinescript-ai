@@ -1,0 +1,54 @@
+---
+description: PineScript v6 validation rules — applied when working with .pine files or generating PineScript code
+globs: "**/*.pine"
+alwaysApply: false
+---
+
+# PineScript v6 Validation
+
+When generating or editing PineScript, always validate against these rules before presenting code.
+
+## Mandatory Structure
+
+- First line: `//@version=6`
+- Exactly one declaration: `indicator("Title")`, `strategy("Title")`, or `library("Title")`
+
+## Never Use (Deprecated in v6)
+
+- `security()` -> `request.security()`
+- `study()` -> `indicator()`
+- `transp=` -> `color.new(color, 0-100)`
+- `iff()` -> ternary `condition ? a : b`
+- `tostring()` -> `str.tostring()`
+- `tonumber()` -> `str.tonumber()`
+- `input.integer()` -> `input.int()`
+- `input.resolution()` -> `input.timeframe()`
+
+## Does NOT Exist (LLMs hallucinate these)
+
+- `plot.style_dashed` — use `plot.style_line` with `linewidth`
+- `plot.style_dotted` — use `plot.style_circles`
+
+## Type Casting
+
+```pinescript
+// WRONG
+bool x = na
+int y = na
+
+// CORRECT
+bool x = bool(na)
+int y = int(na)
+```
+
+## Common Traps
+
+- `fill()` args must be same type — cannot mix `hline` and `plot`
+- `input.int()` / `input.float()` use `defval=`, NOT `def=`
+- `request.security()` without `lookahead=barmerge.lookahead_off` repaints
+
+## Limits
+
+- Max 64 plot calls (`plot`, `plotshape`, `hline`, `fill`, `bgcolor`, `barcolor`)
+- Max 40 `request.*` calls
+- ~70K compiled character limit

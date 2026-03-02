@@ -1,28 +1,92 @@
 # PineScript AI
 
-Self-hosted PineScript code generator with RAG-powered generation, multi-provider LLM support, and a built-in validation pipeline. Bring your own API key — nothing is stored on any server.
-
-<!-- ![PineScript AI Screenshot](docs/screenshot.png) -->
+Self-hosted PineScript code generator with RAG-powered generation, multi-provider LLM support, and a built-in validation pipeline. Designed to run locally with Ollama (free) or any cloud LLM provider.
 
 ## Features
 
-- **Multi-provider** — Anthropic (Claude), OpenAI (GPT-4.1, o3), Google (Gemini), or Ollama for local models
+- **Multi-provider** — Ollama (free, local), Anthropic (Claude), OpenAI (GPT-4.1, o3), or Google (Gemini)
 - **RAG-powered generation** — BM25 search over PineScript v6 docs and 285 example scripts, injected into every prompt
-- **3-layer validation** — Static regex rules, optional AST transpiler check, AI code review with auto-correction
+- **3-layer validation** — Static regex rules, AST transpiler check via [pine-transpiler](https://github.com/robowick/pine-transpiler), AI code review with auto-correction
 - **Live code editor** — CodeMirror 6 with PineScript syntax highlighting, inline validation results
+- **Cursor/Claude Code integration** — `AGENTS.md` and `.cursor/rules/` provide PineScript v6 rules to AI agents automatically
 - **BYOK** — Bring Your Own Key. API keys stay in your browser's localStorage, never touch a server
 - **Streaming** — Real-time SSE streaming from all providers
 
-## Quick Start
+## Setup (Step by Step)
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 18+ and npm
+- [Ollama](https://ollama.com/) installed (for free local LLM — or use a cloud API key instead)
+- [Git](https://git-scm.com/)
+
+### 1. Clone the repo
 
 ```bash
-git clone https://github.com/arturoabreuhd/pinescript-ai.git
-cd pinescript-ai
+git clone <this-repo-url>
+cd pinescript-ai-main
+```
+
+### 2. Clone the transpiler (sibling directory)
+
+The [pine-transpiler](https://github.com/robowick/pine-transpiler) provides AST-level validation. Clone it next to this repo:
+
+```bash
+cd ..
+git clone https://github.com/robowick/pine-transpiler.git
+cd pine-transpiler
+pnpm install
+cd ../pinescript-ai-main
+```
+
+> If you don't have pnpm: `npm install -g pnpm` first. The transpiler uses pnpm, the main app uses npm.
+
+### 3. Install dependencies
+
+```bash
 npm install
+```
+
+This automatically links the local `pine-transpiler` as a dependency.
+
+### 4. Set up Ollama (free local LLM)
+
+If you want to run without paying for any API:
+
+```bash
+# Start the Ollama service (if not already running)
+ollama serve
+
+# Pull a model (in a separate terminal)
+ollama pull llama3.1
+```
+
+Other good options: `codellama`, `mistral`, `llama3.1:70b` (if you have 40GB+ RAM).
+
+> **Don't want to use Ollama?** Skip this step. You can use Google Gemini (free tier), Anthropic, or OpenAI API keys instead — configure in the app's settings page.
+
+### 5. Run the app
+
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000), pick your provider, paste your API key, and start generating.
+Open [http://localhost:3000](http://localhost:3000).
+
+### 6. Configure the provider
+
+1. The app will prompt you to set up a provider on first visit
+2. Select **Ollama** — no API key needed, just enter your model name (e.g. `llama3.1`)
+3. Optionally enable **Transpiler Validation** in settings for AST-level code checking
+
+### 7. (Optional) Cursor / Claude Code integration
+
+If you're using [Cursor](https://cursor.com/) or [Claude Code](https://docs.anthropic.com/en/docs/claude-code):
+
+- **`AGENTS.md`** at the repo root contains comprehensive PineScript v6 rules that both Cursor and Claude Code read automatically
+- **`.cursor/rules/pinescript-v6.mdc`** activates PineScript-specific rules when editing `.pine` files in Cursor
+
+No extra setup needed — just open the repo in Cursor and the rules are active.
 
 ## Customize Your Knowledge Base
 
@@ -118,15 +182,11 @@ When a user sends a message, the last user message is tokenized and scored again
 
 This keeps the context window around 3–4K tokens of RAG content per generation, enough to ground the model without overwhelming it.
 
-## Optional: Transpiler Validation
+## Transpiler Validation
 
-You can optionally enable AST-level validation using [pine-transpiler](https://github.com/Opus-Aether-AI/pine-transpiler). This catches syntax errors that regex-based validation can't.
+AST-level validation is provided by [pine-transpiler](https://github.com/robowick/pine-transpiler) (forked from [Opus-Aether-AI/pine-transpiler](https://github.com/Opus-Aether-AI/pine-transpiler)), which should be cloned as a sibling directory (see Setup step 2). This catches syntax errors that regex-based validation can't — the transpiler lexes and parses PineScript into an AST, so if it parses, the code is structurally valid.
 
-```bash
-npm install github:Opus-Aether-AI/pine-transpiler
-```
-
-Then enable it in Settings > Transpiler Validation. The transpiler is AGPL-3.0 licensed — installing it is your choice. PineScript AI works fine without it.
+Enable it in Settings > Transpiler Validation. The transpiler is AGPL-3.0 licensed. PineScript AI works fine without it.
 
 ## Docker
 
@@ -175,6 +235,10 @@ data/
 └── pinescript-docs/             Processed JSONs (committed)
 ```
 
+## Acknowledgments
+
+This project is a fork of [pinescript-ai](https://github.com/arturoabreuhd/pinescript-ai) by [Arturo Abreu](https://github.com/arturoabreuhd) (MIT licensed). The transpiler integration uses a fork of [pine-transpiler](https://github.com/Opus-Aether-AI/pine-transpiler) by [Opus Aether AI](https://github.com/Opus-Aether-AI) (AGPL-3.0 licensed).
+
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE) — this repo inherits the MIT license from the upstream pinescript-ai project. Note that the [pine-transpiler](https://github.com/robowick/pine-transpiler) dependency is separately licensed under AGPL-3.0.
