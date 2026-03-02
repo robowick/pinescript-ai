@@ -112,9 +112,9 @@ This repository contains pre-indexed PineScript v6 documentation at `data/pinesc
 
 When unsure about a function's exact signature or parameters, consult `reference-functions.json` before generating code.
 
-## Pine Transpiler (Sibling Repo)
+## Pine Transpiler
 
-The `pine-transpiler` at `../pine-transpiler/` is an AST-based PineScript-to-JavaScript transpiler. It provides a `canTranspilePineScript(code)` function useful for validation — if code parses through the transpiler's lexer + parser, it is structurally valid PineScript.
+The `pine-transpiler` (installed as an npm dependency from `github:robowick/pine-transpiler`) is an AST-based PineScript-to-JavaScript transpiler. It provides a `canTranspilePineScript(code)` function useful for validation — if code parses through the transpiler's lexer + parser, it is structurally valid PineScript.
 
 ### Transpiler Limitations to Be Aware Of
 

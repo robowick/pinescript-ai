@@ -18,54 +18,28 @@ Self-hosted PineScript code generator with RAG-powered generation, multi-provide
 
 - [Node.js](https://nodejs.org/) 18+ and npm
 - [Ollama](https://ollama.com/) installed (for free local LLM — or use a cloud API key instead)
-- [Git](https://git-scm.com/)
 
-### 1. Clone the repo
-
-```bash
-git clone <this-repo-url>
-cd pinescript-ai-main
-```
-
-### 2. Clone the transpiler (sibling directory)
-
-The [pine-transpiler](https://github.com/robowick/pine-transpiler) provides AST-level validation. Clone it next to this repo:
+### 1. Clone and install
 
 ```bash
-cd ..
-git clone https://github.com/robowick/pine-transpiler.git
-cd pine-transpiler
-pnpm install
-cd ../pinescript-ai-main
-```
-
-> If you don't have pnpm: `npm install -g pnpm` first. The transpiler uses pnpm, the main app uses npm.
-
-### 3. Install dependencies
-
-```bash
+git clone https://github.com/robowick/pinescript-ai.git
+cd pinescript-ai
 npm install
 ```
 
-This automatically links the local `pine-transpiler` as a dependency.
+This pulls all dependencies including the [pine-transpiler](https://github.com/robowick/pine-transpiler) for AST validation.
 
-### 4. Set up Ollama (free local LLM)
-
-If you want to run without paying for any API:
+### 2. Set up Ollama (free local LLM)
 
 ```bash
-# Start the Ollama service (if not already running)
-ollama serve
-
-# Pull a model (in a separate terminal)
 ollama pull llama3.1
 ```
 
 Other good options: `codellama`, `mistral`, `llama3.1:70b` (if you have 40GB+ RAM).
 
-> **Don't want to use Ollama?** Skip this step. You can use Google Gemini (free tier), Anthropic, or OpenAI API keys instead — configure in the app's settings page.
+> **Don't want to use Ollama?** Skip this step. You can use Google Gemini (free tier at [aistudio.google.com](https://aistudio.google.com)), Anthropic, or OpenAI API keys instead — configure in the app's settings page.
 
-### 5. Run the app
+### 3. Run the app
 
 ```bash
 npm run dev
@@ -73,13 +47,13 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### 6. Configure the provider
+### 4. Configure the provider
 
 1. The app will prompt you to set up a provider on first visit
 2. Select **Ollama** — no API key needed, just enter your model name (e.g. `llama3.1`)
 3. Optionally enable **Transpiler Validation** in settings for AST-level code checking
 
-### 7. (Optional) Cursor / Claude Code integration
+### 5. (Optional) Cursor / Claude Code integration
 
 If you're using [Cursor](https://cursor.com/) or [Claude Code](https://docs.anthropic.com/en/docs/claude-code):
 
@@ -184,7 +158,7 @@ This keeps the context window around 3–4K tokens of RAG content per generation
 
 ## Transpiler Validation
 
-AST-level validation is provided by [pine-transpiler](https://github.com/robowick/pine-transpiler) (forked from [Opus-Aether-AI/pine-transpiler](https://github.com/Opus-Aether-AI/pine-transpiler)), which should be cloned as a sibling directory (see Setup step 2). This catches syntax errors that regex-based validation can't — the transpiler lexes and parses PineScript into an AST, so if it parses, the code is structurally valid.
+AST-level validation is provided by [pine-transpiler](https://github.com/robowick/pine-transpiler) (forked from [Opus-Aether-AI/pine-transpiler](https://github.com/Opus-Aether-AI/pine-transpiler)), installed automatically via `npm install`. This catches syntax errors that regex-based validation can't — the transpiler lexes and parses PineScript into an AST, so if it parses, the code is structurally valid.
 
 Enable it in Settings > Transpiler Validation. The transpiler is AGPL-3.0 licensed. PineScript AI works fine without it.
 
